@@ -18,10 +18,10 @@ class HomeView extends ConsumerWidget {
             // Show received location data (only updates when another user sends it)
             Text("Received Location:"),
             SizedBox(height: 10),
-            Text('lat : ${notifier.lat}'),
-            Text('lon : ${notifier.lon}'),
+           notifier.lat == null ? Text('loading...') : Text('lat : ${notifier.lat}'),
+           notifier.lat == null ? Text('loading...') :  Text('lon : ${notifier.lon}'),
             SizedBox(height: 10),
-            ElevatedButton(onPressed: notifier.sendLocation, child: Text("Send Location")),
+            ElevatedButton(onPressed: ()=> notifier.sendLocation(context), child: Text("Send Location")),
           ],
         ),
       ),

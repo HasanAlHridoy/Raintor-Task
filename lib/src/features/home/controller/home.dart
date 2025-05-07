@@ -10,8 +10,8 @@ final homeProvider = HomeNotifier(HomeProvider.new);
 
 class HomeProvider extends Notifier<void> {
   late HubConnection _hubConnection;
-  double lat = 0.0;
-  double lon = 0.0;
+  double? lat;
+  double? lon;
   Position? position;
 
   @override
@@ -42,8 +42,13 @@ class HomeProvider extends Notifier<void> {
       final location = args?[0] as Map<String, dynamic>?;
       if (location != null) {
         debugPrint("Received location: $location");
-        lat = location['lat'];
-        lon = location['lon'];
+        if (lat != null && lon != null) {
+          lat = location['lat'];
+          lon = location['lon'];
+        } else {
+          debugPrint("Invalid location data received.");
+        }
+
         ref.notifyListeners();
       } else {
         debugPrint("Received invalid location data.");
@@ -86,6 +91,7 @@ class HomeProvider extends Notifier<void> {
     position = await Geolocator.getCurrentPosition(locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
 
     // Update the current location of the current user (e.g., User A or User B)
+
     lat = position!.latitude;
     lon = position!.longitude;
     ref.notifyListeners();
@@ -93,15 +99,36 @@ class HomeProvider extends Notifier<void> {
   }
 
   // Send latitude and longitude to the server
-  void sendLocation() {
+    sendLocation(BuildContext context) {
     // Send the current user's location to the SignalR server
+    if (position == null) {
+      debugPrint("Position is null, cannot send location.");
+      return;
+    }
     _hubConnection
         .invoke("SendLatLon", args: [position!.latitude, position!.longitude])
         .then((_) {
           debugPrint("Location sent successfully.");
+          if (!context.mounted) return;
+          // Show a Snackbar message when the location is sent
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Location sent successfully.'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.blue,
+            ),
+          );
         })
         .catchError((e) {
           debugPrint("Error sending location: $e");
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error sending location'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.red,
+            ),
+          );
         });
   }
 }
