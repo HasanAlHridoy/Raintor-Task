@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:raitor_task/src/features/home/views/home.dart';
+import 'package:raitor_task/features/home/views/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

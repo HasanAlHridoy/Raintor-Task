@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:raitor_task/src/features/home/controller/home.dart';
+import 'package:raitor_task/features/home/controller/home.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
